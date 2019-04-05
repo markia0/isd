@@ -1,0 +1,347 @@
+<!Doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+     <script>
+        window.onload = function () {
+            // Variables
+            let baseDeDatos = [
+                {
+                    id: 1,
+                    nombre: 'Discoduro 3TB ',
+                    precio: 5000
+                },
+                {
+                    id: 2,
+                    nombre: 'Audifono Bluetooth',
+                    precio: 2850
+                },
+                {
+                    id: 3,
+                    nombre: 'Audifono RGB ',
+                    precio: 8200
+                },
+                {
+                    id: 4,
+                    nombre: 'Gabinete Gamer RGB',
+                    precio: 7000
+                }
+                /*{
+                	id:5,
+                	nombre:'Memoria Ram 64GB RGB',
+                	precio: 14200
+                }*/
+
+            ]
+            let $items = document.querySelector('#items');
+            let carrito = [];
+            let total = 0;
+            let $carrito = document.querySelector('#carrito');
+            let $total = document.querySelector('#total');
+            // Funciones
+            function renderItems () {
+                for (let info of baseDeDatos) {
+                    // Estructura
+                    let miNodo = document.createElement('div');
+                    miNodo.classList.add('card', 'col-sm-4');
+                    // Body
+                    let miNodoCardBody = document.createElement('div');
+                    miNodoCardBody.classList.add('card-body');
+                    // Titulo
+                    let miNodoTitle = document.createElement('h5');
+                    miNodoTitle.classList.add('card-title');
+                    miNodoTitle.textContent = info['nombre'];
+                    // Precio
+                    let miNodoPrecio = document.createElement('p');
+                    miNodoPrecio.classList.add('card-text');
+                    miNodoPrecio.textContent = info['precio'] + '$';
+                    // Boton 
+                    let miNodoBoton = document.createElement('button');
+                    miNodoBoton.classList.add('btn', 'btn-primary');
+                    miNodoBoton.textContent = '+';
+                    miNodoBoton.setAttribute('marcador', info['id']);
+                    miNodoBoton.addEventListener('click', anyadirCarrito);
+                    // Insertamos
+                    miNodoCardBody.appendChild(miNodoTitle);
+                    miNodoCardBody.appendChild(miNodoPrecio);
+                    miNodoCardBody.appendChild(miNodoBoton);
+                    miNodo.appendChild(miNodoCardBody);
+                    $items.appendChild(miNodo);
+                }
+            }
+            function anyadirCarrito () {
+                // Anyadimos el Nodo a nuestro carrito
+                carrito.push(this.getAttribute('marcador'))
+                // Calculo el total
+                calcularTotal();
+                // Renderizamos el carrito 
+                renderizarCarrito();
+
+            }
+
+            function renderizarCarrito () {
+                // Vaciamos todo el html
+                $carrito.textContent = '';
+                // Generamos los Nodos a partir de carrito
+                carrito.forEach(function (item, indice) {
+                    // Obtenemos el item que necesitamos de la variable base de datos
+                    let miItem = baseDeDatos.filter(function(itemBaseDatos) {
+                        return itemBaseDatos['id'] == item;
+                    });
+                    // Creamos el nodo del item del carrito
+                    let miNodo = document.createElement('li');
+                    miNodo.classList.add('list-group-item', 'text-right');
+                    miNodo.textContent = `${miItem[0]['nombre']} - ${miItem[0]['precio']}$`;
+                    // Boton de borrar
+                    let miBoton = document.createElement('button');
+                    miBoton.classList.add('btn', 'btn-danger', 'mx-5');
+                    miBoton.textContent = 'X';
+                    miBoton.setAttribute('posicion', indice);
+                    miBoton.addEventListener('click', borrarItemCarrito);
+                    // Mezclamos nodos
+                    miNodo.appendChild(miBoton);
+                    $carrito.appendChild(miNodo);
+                })
+            }
+
+            function borrarItemCarrito () {
+                // Obtenemos la posicion que hay en el boton pulsado
+                let posicion = this.getAttribute('posicion');
+                // Borramos la posicion que nos interesa
+                carrito.splice(posicion, 1);
+                // volvemos a renderizar
+                renderizarCarrito();
+                // Calculamos de nuevo el precio
+                calcularTotal();
+            }
+
+            function calcularTotal () {
+                // Limpiamos precio anterior
+                total = 0;
+                // Recorremos el array del carrito
+                for (let item of carrito) {
+                    // De cada elemento obtenemos su precio
+                    let miItem = baseDeDatos.filter(function(itemBaseDatos) {
+                        return itemBaseDatos['id'] == item;
+                    });
+                    total = total + miItem[0]['precio'];
+                }
+                // Formateamos el total para que solo tenga dos decimales
+                let totalDosDecimales = total.toFixed(2);
+                // Renderizamos el precio en el HTML
+                $total.textContent = totalDosDecimales;
+            }
+            // Eventos
+
+            // Inicio
+            renderItems();
+        } 
+    </script>
+<style>
+	body{background-color:rgb(0,162,232);}
+	#contenedor{
+		background:#CCC;
+		display:flex;
+		flex-direction: column;
+		position:relative;
+		top:-7px;
+	    background-color:white; 
+		right:10px;
+		z-index:1;
+	}
+
+    #inicio{
+		position:absolute;
+		left:260px;
+		top:45px;
+		font-family: fantasy;
+		z-index:19;
+		color: black;
+	}
+
+	#img{
+		width:200px;
+		position: absolute;
+		left: 12px;
+		padding:6px;
+		z-index: 19; 	
+	}
+
+	#icon1{
+		position: absolute;
+		width:25px;
+		left:225px;
+		top:40px;
+		z-index:19;
+	}
+
+	#p1{
+		position: absolute;
+		left:350px;
+		top:45px;
+		font-family: fantasy;
+		z-index:19;
+		color:black; 
+	}
+
+	#search{	
+		position: absolute;
+		width:260px;
+		left:1105px;
+		top:-2px;
+		z-index:19;
+	}
+
+	#icon2{
+		position: absolute;
+		width:40px;
+		left:991px; 
+		top:45px;
+		z-index:19;
+
+	}
+
+	#p2{
+		position: absolute;
+		left:1030px;
+		top:45px;
+		font-family: fantasy;
+		z-index:19;
+		color: black;
+	}
+
+	#faceicon{
+		position:absolute;
+		left:400px;
+		top:45px;
+		width:25px;
+		z-index:19;
+	}
+
+	#instaicon{
+		position:absolute;
+		left:430px;
+		top:44px;
+		width:25px;
+		z-index:19;
+	}
+
+	#correoicon{
+		position:absolute;
+		left:455px;
+		top:38px;
+		width:35px;
+		z-index:19;
+	}
+
+	.item-1{
+		color:white;
+	}
+
+	#carrito{
+		width:1000px;
+		position: absolute;
+		left: 250px;
+		top:200px;
+		padding:6px;
+		z-index: 19; 
+	}
+	#contenedor2{
+		background: white;
+		width: 230px;
+		height: 500px;
+	}
+	#TituloTabla{
+		width: 100%;
+	    height: 40px;
+	    background: blue; 
+        color: white;
+	    text-align: center;
+	    font-size: 20px 
+
+	}
+	.contenido{
+		color: black;
+		font-size:16px;
+		font-family: serif,monospace;
+	}
+	#barra{
+		background-color:white;
+		width: 200px;
+		height: 108px;
+	}
+	/*#imgmov{
+		background-color: white;
+		width: 230px;
+		height: 500px;
+		right:500px; 
+
+	}*/
+	#contenido{
+    width: 800px;
+    height: 400px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+   margin-top: -500px; 
+}
+
+</style>
+</head>
+
+<body>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<img id="img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/ISD_Logo.svg/1280px-ISD_Logo.svg.png">
+<img id="icon1"src="https://image.flaticon.com/icons/png/128/2/2144.png">
+<img id="search" src="https://media.istockphoto.com/vectors/search-bar-field-vector-interface-element-with-search-button-flat-vector-id847248248">
+<img id="icon2" src="https://imageog.flaticon.com/icons/png/512/2/2772.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF">
+<img id="faceicon" src="http://creativeloads.com/foto/png-facebook-icon-194.jpg">
+<img id="instaicon" src="https://clipart.info/images/ccovers/1516920571instagram-png-instagram-icon-1600x1600.png">
+<img id="correoicon" src="http://pluspng.com/img-png/email-icon-png-email-icon-2048.png">
+<a id="inicio" href="http://localhost/ISD/Productos/kakakawaii.html"> PRODUCTOS|</a>
+<a id="p1" href="">TIENDA</a> 
+<a id="p2" href="">|COMPRAR </a>
+<div id="contenedor">
+	<div id="barra">
+		
+	</div>
+</div>
+
+<div id="contenedor2">
+	<p id="TituloTabla">Categorias<br></p>
+	<div id="contenidotabla">
+		<a class="contenido" href="">Promociones<br><br></a>
+		<a class="contenido" href="">Nuevos articulos<br><br></a>
+		<a class="contenido" href="">Computo (Hardware)<br><br></a>
+		<a class="contenido" href="">Computadoras<br><br></a>
+		<a class="contenido" href="">impresión y Copiado<br><br></a>
+		<a class="contenido" href="">Audio y Video<br><br></a> 
+		<a class="contenido" href="">Energia<br><br></a>
+		<a class="contenido" href="">Puntos de venta (POS)<br><br></a>
+		<a class="contenido" href="">Seguridad y Vigilancia<br><br></a>
+	
+	</div>
+</div>
+
+<div id="contenido">
+    <div class="container">
+        <div class="row">
+            <!-- Elementos generados a partir del JSON -->
+            <main id="items" class="col-sm-8 row"></main>
+            <!-- Carrito -->
+            <aside class="col-sm-4">
+                <h2>Carrito</h2>
+                <!-- Elementos del carrito -->
+                <ul id="carrito" class="list-group"></ul>
+                <hr>
+                <!-- Precio total -->
+                <p class="text-right">Total: <span id="total"></span>&#36;</p>
+            </aside>
+        </div>
+    </div>
+</div>
+</body>
+
